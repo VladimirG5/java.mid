@@ -6,9 +6,9 @@ import hr.abysalto.hiring.mid.dto.response.CartResponse;
 import hr.abysalto.hiring.mid.model.CartItem;
 import hr.abysalto.hiring.mid.model.User;
 import hr.abysalto.hiring.mid.repository.CartItemRepository;
-import hr.abysalto.hiring.mid.repository.UserRepository;
 import hr.abysalto.hiring.mid.service.CartService;
 import hr.abysalto.hiring.mid.service.DummyJsonClientService;
+import hr.abysalto.hiring.mid.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,13 +18,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CardServiceImpl implements CartService {
 
+    private final UserService userService;
     private final CartItemRepository cartItemRepository;
-    private final UserRepository userRepository;
     private final DummyJsonClientService dummyJsonClient;
 
     @Override
     public CartResponse getCart(String username) {
-        User user = getUser(username);
+        User user = userService.getUser(username);
         List<CartItemResponse> items = cartItemRepository.findByUserId(user.getId())
                 .stream()
                 .map(item -> CartItemResponse.builder()
@@ -42,7 +42,7 @@ public class CardServiceImpl implements CartService {
 
     @Override
     public CartResponse addToCart(String username, AddToCartRequest request) {
-        User user = getUser(username);
+        User user = userService.getUser(username);
         cartItemRepository.findByUserIdAndProductId(user.getId(), request.getProductId())
                 .ifPresentOrElse(existing -> {
                     existing.setQuantity(existing.getQuantity() + request.getQuantity());
@@ -58,15 +58,9 @@ public class CardServiceImpl implements CartService {
 
     @Override
     public CartResponse removeFromCart(String username, Long productId) {
-        User user = getUser(username);
+        User user = userService.getUser(username);
         cartItemRepository.deleteByUserIdAndProductId(user.getId(), productId);
 
         return getCart(username);
-    }
-
-    @Override
-    public User getUser(String username) {
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found: " + username));
     }
 }

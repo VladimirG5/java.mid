@@ -1,19 +1,55 @@
 package hr.abysalto.hiring.mid.service.impl;
 
 import hr.abysalto.hiring.mid.dto.response.DummyProduct;
+import hr.abysalto.hiring.mid.model.FavoriteProduct;
+import hr.abysalto.hiring.mid.model.User;
+import hr.abysalto.hiring.mid.repository.FavoriteProductRepository;
 import hr.abysalto.hiring.mid.service.DummyJsonClientService;
 import hr.abysalto.hiring.mid.service.ProductService;
+import hr.abysalto.hiring.mid.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
 
+    private final UserService userService;
     private final DummyJsonClientService dummyJsonClient;
+    private final FavoriteProductRepository favoriteRepository;
 
     @Override
     public DummyProduct getProduct(Long id) {
         return dummyJsonClient.getProduct(id);
     }
+
+    @Override
+    public void addToFavorites(String username, Long productId) {
+        User user = userService.getUser(username);
+        if (!favoriteRepository.existsByUserIdAndProductId(user.getId(), productId)) {
+            favoriteRepository.save(FavoriteProduct.builder()
+                    .userId(user.getId())
+                    .productId(productId)
+                    .build());
+        }
+    }
+
+    @Override
+    public void removeFromFavorites(String username, Long productId) {
+        User user = userService.getUser(username);
+        favoriteRepository.deleteByUserIdAndProductId(user.getId(), productId);
+    }
+
+    @Override
+    public List<DummyProduct> getFavorites(String username) {
+        User user = userService.getUser(username);
+
+        return favoriteRepository.findByUserId(user.getId())
+                .stream()
+                .map(fav -> dummyJsonClient.getProduct(fav.getProductId()))
+                .toList();
+    }
+
 }

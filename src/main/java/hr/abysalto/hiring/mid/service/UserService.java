@@ -5,6 +5,9 @@ import hr.abysalto.hiring.mid.dto.response.UserResponse;
 import hr.abysalto.hiring.mid.model.User;
 
 public interface UserService {
-    public User register(RegisterRequest request);
-    public UserResponse getCurrentUser(String username);
+    User register(RegisterRequest request);
+
+    User getUser(String username);
+
+    UserResponse getCurrentUser(String username);
 }

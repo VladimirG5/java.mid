@@ -37,11 +37,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse getCurrentUser(String username) {
-        User user = userRepository.findByUsername(username)
+    public User getUser(String username) {
+        return userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found: " + username));
-        return toResponse(user);
     }
+
+
+    @Override
+    public UserResponse getCurrentUser(String username) {
+        return toResponse(getUser(username));
+    }
+
 
     private UserResponse toResponse(User user) {
         return UserResponse.builder()
