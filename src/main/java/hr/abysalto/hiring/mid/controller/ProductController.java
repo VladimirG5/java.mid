@@ -1,6 +1,7 @@
 package hr.abysalto.hiring.mid.controller;
 
 import hr.abysalto.hiring.mid.dto.response.DummyProduct;
+import hr.abysalto.hiring.mid.dto.response.PageResponse;
 import hr.abysalto.hiring.mid.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,14 @@ public class ProductController {
     @GetMapping("/{id}")
     public ResponseEntity<DummyProduct> getProduct(@PathVariable Long id) {
         return ResponseEntity.ok(productService.getProduct(id));
+    }
+
+    @GetMapping
+    public ResponseEntity<PageResponse<DummyProduct>> getProducts(@RequestParam(defaultValue = "0") int page,
+                                                                  @RequestParam(defaultValue = "10") int size,
+                                                                  @RequestParam(defaultValue = "id") String sortBy,
+                                                                  @RequestParam(defaultValue = "asc") String order) {
+        return ResponseEntity.ok(productService.getProducts(page, size, sortBy, order));
     }
 
     @PostMapping("/{id}/favorite")

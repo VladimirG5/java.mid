@@ -1,6 +1,8 @@
 package hr.abysalto.hiring.mid.service.impl;
 
 import hr.abysalto.hiring.mid.dto.response.DummyProduct;
+import hr.abysalto.hiring.mid.dto.response.DummyProductsResponse;
+import hr.abysalto.hiring.mid.dto.response.PageResponse;
 import hr.abysalto.hiring.mid.model.FavoriteProduct;
 import hr.abysalto.hiring.mid.model.User;
 import hr.abysalto.hiring.mid.repository.FavoriteProductRepository;
@@ -24,6 +26,20 @@ public class ProductServiceImpl implements ProductService {
     public DummyProduct getProduct(Long id) {
         return dummyJsonClient.getProduct(id);
     }
+
+    public PageResponse<DummyProduct> getProducts(int page, int size, String sortBy, String order) {
+        DummyProductsResponse response = dummyJsonClient.getProducts(page, size, sortBy, order);
+        int totalPages = (int) Math.ceil((double) response.getTotal() / size);
+
+        return PageResponse.<DummyProduct>builder()
+                .content(response.getProducts())
+                .page(page)
+                .size(size)
+                .total(response.getTotal())
+                .totalPages(totalPages)
+                .build();
+    }
+
 
     @Override
     public void addToFavorites(String username, Long productId) {

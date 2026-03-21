@@ -16,6 +16,6 @@ public interface CartItemRepository extends CrudRepository<CartItem, Long> {
     Optional<CartItem> findByUserIdAndProductId(Long userId, Long productId);
 
     @Modifying
-    @Query("DELETE FROM cart_item WHERE user_id = :userId AND product_id = :productId")
+    @Query("DELETE FROM cart_items WHERE user_id = :userId AND product_id = :productId")
     void deleteByUserIdAndProductId(Long userId, Long productId);
 }
