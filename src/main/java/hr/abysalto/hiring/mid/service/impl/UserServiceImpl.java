@@ -1,0 +1,37 @@
+package hr.abysalto.hiring.mid.service.impl;
+
+import hr.abysalto.hiring.mid.dto.request.RegisterRequest;
+import hr.abysalto.hiring.mid.model.User;
+import hr.abysalto.hiring.mid.repository.UserRepository;
+import hr.abysalto.hiring.mid.service.UserService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class UserServiceImpl implements UserService {
+
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    @Override
+    public User register(RegisterRequest request) {
+        if (userRepository.existsByUsername(request.getUsername())) {
+            throw new IllegalArgumentException("Username already taken");
+        }
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new IllegalArgumentException("Email already in use");
+        }
+
+        User user = User.builder()
+                .username(request.getUsername())
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
+                .build();
+
+        return userRepository.save(user);
+    }
+}
