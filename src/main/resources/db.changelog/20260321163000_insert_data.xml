@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet id="populate-buyers-table" author="vladimir.gjorgieski">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="BUYERS"/>
+        </preConditions>
+
+        <sql>
+            INSERT INTO BUYERS (first_name, last_name, title, created_at, updated_at)
+            VALUES
+                ('Jabba', 'Hutt', 'the',CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+                ('Anakin', 'Skywalker', NULL,CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+                ('Jar Jar', 'Binks', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+                ('Leia', 'Organa', 'Princess', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+        </sql>
+    </changeSet>
+</databaseChangeLog>

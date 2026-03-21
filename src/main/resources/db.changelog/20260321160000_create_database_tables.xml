@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet id="create-table-users" author="vladimir.gjorgieski">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="USERS"/>
+            </not>
+        </preConditions>
+
+        <sql>
+            CREATE TABLE USERS (
+                                   id         BIGINT AUTO_INCREMENT PRIMARY KEY,
+                                   username   VARCHAR(50)  NOT NULL UNIQUE,
+                                   email      VARCHAR(100) NOT NULL UNIQUE,
+                                   password   VARCHAR(100) NOT NULL,
+                                   first_name VARCHAR(100),
+                                   last_name  VARCHAR(100),
+                                   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                                   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+
+            );
+
+        </sql>
+    </changeSet>
+
+    <changeSet id="create-table-cart-items" author="vladimir.gjorgieski">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="CART_ITEMS"/>
+            </not>
+        </preConditions>
+
+        <sql>
+            CREATE TABLE CART_ITEMS (
+                                   id         BIGINT AUTO_INCREMENT PRIMARY KEY,
+                                   user_id    BIGINT NOT NULL,
+                                   product_id BIGINT NOT NULL,
+                                   quantity   INT    NOT NULL DEFAULT 1,
+                                   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                                   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                                   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+            );
+
+        </sql>
+    </changeSet>
+
+
+    <changeSet id="create-table-favorite-products" author="vladimir.gjorgieski">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="FAVORITE_PRODUCTS"/>
+            </not>
+        </preConditions>
+
+        <sql>
+            CREATE TABLE FAVORITE_PRODUCTS (
+                                               id         BIGINT AUTO_INCREMENT PRIMARY KEY,
+                                               user_id    BIGINT NOT NULL,
+                                               product_id BIGINT NOT NULL,
+                                               created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                                               updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                                               FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+            );
+
+        </sql>
+    </changeSet>
+
+    <changeSet id="create-table-buyers" author="vladimir.gjorgieski">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="BUYERS"/>
+            </not>
+        </preConditions>
+
+        <sql>
+            CREATE TABLE BUYERS (
+                                   buyer_id   INT AUTO_INCREMENT PRIMARY KEY,
+                                   first_name VARCHAR(100) NOT NULL,
+                                   last_name  VARCHAR(100) NOT NULL,
+                                   title      VARCHAR(100) NULL,
+                                   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                                   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+            );
+
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
