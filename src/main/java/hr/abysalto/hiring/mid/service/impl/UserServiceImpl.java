@@ -1,6 +1,7 @@
 package hr.abysalto.hiring.mid.service.impl;
 
 import hr.abysalto.hiring.mid.dto.request.RegisterRequest;
+import hr.abysalto.hiring.mid.dto.response.UserResponse;
 import hr.abysalto.hiring.mid.model.User;
 import hr.abysalto.hiring.mid.repository.UserRepository;
 import hr.abysalto.hiring.mid.service.UserService;
@@ -33,5 +34,22 @@ public class UserServiceImpl implements UserService {
                 .build();
 
         return userRepository.save(user);
+    }
+
+    @Override
+    public UserResponse getCurrentUser(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found: " + username));
+        return toResponse(user);
+    }
+
+    private UserResponse toResponse(User user) {
+        return UserResponse.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .build();
     }
 }
