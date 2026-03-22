@@ -7,6 +7,9 @@ import hr.abysalto.hiring.mid.model.User;
 import hr.abysalto.hiring.mid.security.JwtUtil;
 import hr.abysalto.hiring.mid.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +34,15 @@ public class AuthController {
     private final UserDetailsService userDetailsService;
     private final JwtUtil jwtUtil;
 
-    @Operation(summary = "Register a new user")
+    @Operation(
+            summary = "Register a new user",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "User registered successfully",
+                            content = @Content(schema = @Schema(implementation = AuthResponse.class))),
+                    @ApiResponse(responseCode = "400", description = "Invalid request body"),
+                    @ApiResponse(responseCode = "409", description = "Username already exists")
+            }
+    )
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
         User user = userService.register(request);
@@ -41,7 +52,15 @@ public class AuthController {
         return ResponseEntity.ok(new AuthResponse(token, user.getUsername()));
     }
 
-    @Operation(summary = "Login and receive JWT token")
+    @Operation(
+            summary = "Login and receive JWT token",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Login successful",
+                            content = @Content(schema = @Schema(implementation = AuthResponse.class))),
+                    @ApiResponse(responseCode = "400", description = "Invalid request body"),
+                    @ApiResponse(responseCode = "401", description = "Invalid credentials")
+            }
+    )
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
         authenticationManager.authenticate(

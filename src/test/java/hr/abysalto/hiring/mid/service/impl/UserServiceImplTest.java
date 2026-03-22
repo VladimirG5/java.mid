@@ -4,7 +4,7 @@ import hr.abysalto.hiring.mid.dto.request.RegisterRequest;
 import hr.abysalto.hiring.mid.dto.response.UserResponse;
 import hr.abysalto.hiring.mid.model.User;
 import hr.abysalto.hiring.mid.repository.UserRepository;
-import hr.abysalto.hiring.mid.service.UserService;
+import hr.abysalto.hiring.mid.util.DataGenerator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -34,12 +34,7 @@ class UserServiceImplTest {
 
     @Test
     void register_whenRequestIsValid_thenRegisterTheUser() {
-        RegisterRequest request = new RegisterRequest();
-        request.setUsername("john");
-        request.setEmail("john@example.com");
-        request.setPassword("secret123");
-        request.setFirstName("John");
-        request.setLastName("Doe");
+        RegisterRequest request = DataGenerator.requestRegisterWithDefaultValues().build();
 
         when(userRepository.existsByUsername("john")).thenReturn(false);
         when(userRepository.existsByEmail("john@example.com")).thenReturn(false);
@@ -56,10 +51,7 @@ class UserServiceImplTest {
 
     @Test
     void register_whenUsernameIsTaken_thenThrowException() {
-        RegisterRequest request = new RegisterRequest();
-        request.setUsername("john");
-        request.setEmail("john@example.com");
-        request.setPassword("secret123");
+        RegisterRequest request = DataGenerator.requestRegisterWithDefaultValues().build();
 
         when(userRepository.existsByUsername("john")).thenReturn(true);
 
@@ -71,10 +63,7 @@ class UserServiceImplTest {
 
     @Test
     void register_whenEmailIsTaken_thenThrowException() {
-        RegisterRequest request = new RegisterRequest();
-        request.setUsername("john");
-        request.setEmail("john@example.com");
-        request.setPassword("secret123");
+        RegisterRequest request = DataGenerator.requestRegisterWithDefaultValues().build();
 
         when(userRepository.existsByUsername("john")).thenReturn(false);
         when(userRepository.existsByEmail("john@example.com")).thenReturn(true);

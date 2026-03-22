@@ -5,6 +5,7 @@ import hr.abysalto.hiring.mid.dto.request.LoginRequest;
 import hr.abysalto.hiring.mid.dto.request.RegisterRequest;
 import hr.abysalto.hiring.mid.security.JwtUtil;
 import hr.abysalto.hiring.mid.service.UserService;
+import hr.abysalto.hiring.mid.util.DataGenerator;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -48,10 +49,7 @@ class AuthControllerTest {
 
     @Test
     void register_whenRequestIsValid_thenReturnTokenAndUsername() throws Exception {
-        RegisterRequest request = new RegisterRequest();
-        request.setUsername("john");
-        request.setEmail("john@example.com");
-        request.setPassword("secret123");
+        RegisterRequest request = DataGenerator.requestRegisterWithDefaultValues().build();
 
         hr.abysalto.hiring.mid.model.User savedUser = hr.abysalto.hiring.mid.model.User.builder().username("john").build();
         UserDetails userDetails = org.springframework.security.core.userdetails.User.withUsername("john").password("hashed").roles("USER").build();
@@ -70,10 +68,7 @@ class AuthControllerTest {
 
     @Test
     void register_whenRequestHasBlankUsername_thenReturn400() throws Exception {
-        RegisterRequest request = new RegisterRequest();
-        request.setUsername("");
-        request.setEmail("john@example.com");
-        request.setPassword("secret123");
+        RegisterRequest request = DataGenerator.requestRegisterWithoutUsername().build();
 
         mockMvc.perform(post("/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -83,9 +78,7 @@ class AuthControllerTest {
 
     @Test
     void login_whenRequestIsValid_thenReturnTokenAndUsername() throws Exception {
-        LoginRequest request = new LoginRequest();
-        request.setUsername("john");
-        request.setPassword("secret123");
+        LoginRequest request = DataGenerator.requestLoginWithDefaultValues().build();
 
         UserDetails userDetails = User.withUsername("john").password("hashed").roles("USER").build();
 
@@ -104,9 +97,7 @@ class AuthControllerTest {
 
     @Test
     void login_whenRequestHasBlankPassword_thenReturn400() throws Exception {
-        LoginRequest request = new LoginRequest();
-        request.setUsername("john");
-        request.setPassword("");
+        LoginRequest request = DataGenerator.requestLoginWithoutPassword().build();
 
         mockMvc.perform(post("/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
