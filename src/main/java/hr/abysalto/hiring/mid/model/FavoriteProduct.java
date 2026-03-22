@@ -1,14 +1,14 @@
 package hr.abysalto.hiring.mid.model;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.springframework.data.relational.core.mapping.Table;
 
 @Table("FAVORITE_PRODUCTS")
 @Data
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 public class FavoriteProduct extends BaseModel{

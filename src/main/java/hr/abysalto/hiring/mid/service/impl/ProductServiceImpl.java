@@ -20,7 +20,7 @@ public class ProductServiceImpl implements ProductService {
 
     private final UserService userService;
     private final DummyJsonClientService dummyJsonClient;
-    private final FavoriteProductRepository favoriteRepository;
+    private final FavoriteProductRepository favoriteProductRepository;
 
     @Override
     public DummyProduct getProduct(Long id) {
@@ -44,8 +44,8 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void addToFavorites(String username, Long productId) {
         User user = userService.getUser(username);
-        if (!favoriteRepository.existsByUserIdAndProductId(user.getId(), productId)) {
-            favoriteRepository.save(FavoriteProduct.builder()
+        if (!favoriteProductRepository.existsByUserIdAndProductId(user.getId(), productId)) {
+            favoriteProductRepository.save(FavoriteProduct.builder()
                     .userId(user.getId())
                     .productId(productId)
                     .build());
@@ -55,14 +55,14 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void removeFromFavorites(String username, Long productId) {
         User user = userService.getUser(username);
-        favoriteRepository.deleteByUserIdAndProductId(user.getId(), productId);
+        favoriteProductRepository.deleteByUserIdAndProductId(user.getId(), productId);
     }
 
     @Override
     public List<DummyProduct> getFavorites(String username) {
         User user = userService.getUser(username);
 
-        return favoriteRepository.findByUserId(user.getId())
+        return favoriteProductRepository.findByUserId(user.getId())
                 .stream()
                 .map(fav -> dummyJsonClient.getProduct(fav.getProductId()))
                 .toList();
