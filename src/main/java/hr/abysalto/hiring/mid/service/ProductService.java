@@ -31,7 +31,7 @@ public interface ProductService {
      *
      * @param username  the authenticated user's username
      * @param productId the ID of the product to favorite
-     * @throws RuntimeException if the user is not found
+     * @throws hr.abysalto.hiring.mid.exception.UserNotFoundException if the user is not found
      */
     void addToFavorites(String username, Long productId);
 
@@ -40,7 +40,7 @@ public interface ProductService {
      *
      * @param username  the authenticated user's username
      * @param productId the ID of the product to unfavorite
-     * @throws RuntimeException if the user is not found
+     * @throws hr.abysalto.hiring.mid.exception.UserNotFoundException if the user is not found
      */
     void removeFromFavorites(String username, Long productId);
 
@@ -49,7 +49,7 @@ public interface ProductService {
      *
      * @param username the authenticated user's username
      * @return list of favorited {@link DummyProduct} objects
-     * @throws RuntimeException if the user is not found
+     * @throws hr.abysalto.hiring.mid.exception.UserNotFoundException if the user is not found
      */
     List<DummyProduct> getFavorites(String username);
 }

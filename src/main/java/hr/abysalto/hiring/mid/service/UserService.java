@@ -11,7 +11,8 @@ public interface UserService {
      *
      * @param request the registration details (username, email, password)
      * @return the persisted {@link User} entity
-     * @throws RuntimeException if the username is already taken
+     * @throws hr.abysalto.hiring.mid.exception.UsernameAlreadyTakenException if the username is already taken
+     * @throws hr.abysalto.hiring.mid.exception.EmailAlreadyInUseException if the email is already in use
      */
     User register(RegisterRequest request);
 
@@ -20,7 +21,7 @@ public interface UserService {
      *
      * @param username the username to look up
      * @return the matching {@link User} entity
-     * @throws RuntimeException if no user with the given username exists
+     * @throws hr.abysalto.hiring.mid.exception.UserNotFoundException if no user with the given username exists
      */
     User getUser(String username);
 

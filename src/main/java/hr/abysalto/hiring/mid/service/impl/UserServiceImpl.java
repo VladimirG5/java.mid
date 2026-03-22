@@ -3,6 +3,9 @@ package hr.abysalto.hiring.mid.service.impl;
 import hr.abysalto.hiring.mid.dto.request.RegisterRequest;
 import hr.abysalto.hiring.mid.dto.response.UserResponse;
 import hr.abysalto.hiring.mid.model.User;
+import hr.abysalto.hiring.mid.exception.EmailAlreadyInUseException;
+import hr.abysalto.hiring.mid.exception.UserNotFoundException;
+import hr.abysalto.hiring.mid.exception.UsernameAlreadyTakenException;
 import hr.abysalto.hiring.mid.repository.UserRepository;
 import hr.abysalto.hiring.mid.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -19,10 +22,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public User register(RegisterRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) {
-            throw new IllegalArgumentException("Username already taken");
+            throw new UsernameAlreadyTakenException(request.getUsername());
         }
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new IllegalArgumentException("Email already in use");
+            throw new EmailAlreadyInUseException(request.getEmail());
         }
 
         User user = User.builder()
@@ -39,7 +42,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUser(String username) {
         return userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found: " + username));
+                .orElseThrow(() -> new UserNotFoundException(username));
     }
 
 

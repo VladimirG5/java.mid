@@ -2,6 +2,8 @@ package hr.abysalto.hiring.mid.service.impl;
 
 import hr.abysalto.hiring.mid.dto.request.RegisterRequest;
 import hr.abysalto.hiring.mid.dto.response.UserResponse;
+import hr.abysalto.hiring.mid.exception.EmailAlreadyInUseException;
+import hr.abysalto.hiring.mid.exception.UsernameAlreadyTakenException;
 import hr.abysalto.hiring.mid.model.User;
 import hr.abysalto.hiring.mid.repository.UserRepository;
 import hr.abysalto.hiring.mid.util.DataGenerator;
@@ -56,8 +58,8 @@ class UserServiceImplTest {
         when(userRepository.existsByUsername("john")).thenReturn(true);
 
         assertThatThrownBy(() -> userService.register(request))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Username already taken");
+                .isInstanceOf(UsernameAlreadyTakenException.class)
+                .hasMessage("Username already taken: john");
         verify(userRepository, never()).save(any());
     }
 
@@ -69,8 +71,8 @@ class UserServiceImplTest {
         when(userRepository.existsByEmail("john@example.com")).thenReturn(true);
 
         assertThatThrownBy(() -> userService.register(request))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Email already in use");
+                .isInstanceOf(EmailAlreadyInUseException.class)
+                .hasMessage("Email already in use: john@example.com");
         verify(userRepository, never()).save(any());
     }
 

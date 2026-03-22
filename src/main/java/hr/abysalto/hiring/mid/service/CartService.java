@@ -10,7 +10,7 @@ public interface CartService {
      *
      * @param username the authenticated user's username
      * @return a {@link CartResponse} containing all cart items with product details
-     * @throws RuntimeException if the user is not found
+     * @throws hr.abysalto.hiring.mid.exception.UserNotFoundException if the user is not found
      */
     CartResponse getCart(String username);
 
@@ -21,7 +21,7 @@ public interface CartService {
      * @param username the authenticated user's username
      * @param request  the product ID and quantity to add
      * @return the updated {@link CartResponse}
-     * @throws RuntimeException if the user is not found
+     * @throws hr.abysalto.hiring.mid.exception.UserNotFoundException if the user is not found
      */
     CartResponse addToCart(String username, AddToCartRequest request);
 
@@ -31,7 +31,7 @@ public interface CartService {
      * @param username  the authenticated user's username
      * @param productId the ID of the product to remove
      * @return the updated {@link CartResponse}
-     * @throws RuntimeException if the user is not found
+     * @throws hr.abysalto.hiring.mid.exception.UserNotFoundException if the user is not found
      */
     CartResponse removeFromCart(String username, Long productId);
 }
