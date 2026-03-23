@@ -4,23 +4,23 @@ import { login } from '../api/auth'
 import { useAuth } from '../context/AuthContext'
 
 export default function LoginPage() {
-  const { saveToken } = useAuth()
-  const navigate = useNavigate()
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
+  const { saveToken } = useAuth();
+  const navigate = useNavigate();
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault()
-    setError('')
+    e.preventDefault();
+    setError('');
     try {
-      const { data } = await login({ username, password })
-      saveToken(data.token)
-      navigate('/products')
+      const { data } = await login({ username, password });
+      saveToken(data.token);
+      navigate('/products');
     } catch (err: unknown) {
       const message = (err as { response?: { data?: { message?: string } } })
-        .response?.data?.message
-      setError(message ?? 'Login failed')
+        .response?.data?.message;
+      setError(message ?? 'Login failed');
     }
   }
 

@@ -7,19 +7,19 @@ interface AuthContextType {
   isAuthenticated: boolean
 }
 
-const AuthContext = createContext<AuthContextType | null>(null)
+const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [token, setToken] = useState<string | null>(localStorage.getItem('token'))
+  const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
 
   const saveToken = (newToken: string) => {
-    localStorage.setItem('token', newToken)
-    setToken(newToken)
+    localStorage.setItem('token', newToken);
+    setToken(newToken);
   }
 
   const logout = () => {
-    localStorage.removeItem('token')
-    setToken(null)
+    localStorage.removeItem('token');
+    setToken(null);
   }
 
   return (
@@ -30,7 +30,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 }
 
 export function useAuth(): AuthContextType {
-  const ctx = useContext(AuthContext)
-  if (!ctx) throw new Error('useAuth must be used within AuthProvider')
-  return ctx
+  const ctx = useContext(AuthContext);
+  if (!ctx) throw new Error('useAuth must be used within AuthProvider');
+  return ctx;
 }

@@ -12,8 +12,8 @@ interface RegisterForm {
 }
 
 export default function RegisterPage() {
-  const { saveToken } = useAuth()
-  const navigate = useNavigate()
+  const { saveToken } = useAuth();
+  const navigate = useNavigate();
   const [form, setForm] = useState<RegisterForm>({
     username: '',
     email: '',
@@ -21,24 +21,24 @@ export default function RegisterPage() {
     firstName: '',
     lastName: '',
   })
-  const [error, setError] = useState('')
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault()
-    setError('')
+    e.preventDefault();
+    setError('');
     try {
       const { data } = await register(form)
-      saveToken(data.token)
-      navigate('/products')
+      saveToken(data.token);
+      navigate('/products');
     } catch (err: unknown) {
       const message = (err as { response?: { data?: { message?: string } } })
-        .response?.data?.message
-      setError(message ?? 'Registration failed')
+        .response?.data?.message;
+      setError(message ?? 'Registration failed');
     }
   }
 
   const set = (field: keyof RegisterForm) => (e: React.ChangeEvent<HTMLInputElement>) =>
-    setForm({ ...form, [field]: e.target.value })
+    setForm({ ...form, [field]: e.target.value });
 
   return (
     <div className="form-container">

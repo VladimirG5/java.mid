@@ -2,18 +2,30 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
 export default function Navbar() {
-  const { isAuthenticated, logout } = useAuth()
-  const navigate = useNavigate()
+  const { isAuthenticated, logout } = useAuth();
+  const navigate = useNavigate();
 
   const handleLogout = () => {
-    logout()
-    navigate('/login')
+    logout();
+    navigate('/login');
   }
 
   return (
     <nav className="navbar">
-      <Link to="/login">Login</Link>
-      <Link to="/register">Register</Link>
+      <Link to="/products">Abysalto Online Shop</Link>
+      {isAuthenticated ? (
+        <>
+          <Link to="/cart">Cart</Link>
+          <Link to="/favorites">Favorites</Link>
+          <Link to="/profile">Profile</Link>
+          <button onClick={handleLogout}>Logout</button>
+        </>
+      ) : (
+        <>
+          <Link to="/login">Login</Link>
+          <Link to="/register">Register</Link>
+        </>
+      )}
     </nav>
   )
 }
