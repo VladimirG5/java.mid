@@ -17,7 +17,7 @@ export default function ProfilePage() {
   return (
     <div className="container">
       <h2>Profile</h2>
-      <div className="card">
+      <div className="profile-card">
         <p><strong>Username:</strong> {user.username}</p>
         <p><strong>Email:</strong> {user.email}</p>
         <p><strong>Name:</strong> {user.firstName} {user.lastName}</p>
