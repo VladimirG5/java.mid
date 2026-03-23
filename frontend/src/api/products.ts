@@ -25,7 +25,7 @@ export const getFavorites = () =>
   client.get<Product[]>('/products/favorites');
 
 export const addToFavorites = (id: string | number) =>
-  client.post(`/products/favorites/${id}`);
+  client.post(`/products/${id}/favorite`);
 
 export const removeFromFavorites = (id: string | number) =>
-  client.delete(`/products/favorites/${id}`);
+  client.delete(`/products/${id}/favorite`);
