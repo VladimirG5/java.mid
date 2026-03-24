@@ -1,0 +1,6 @@
+frontend/
+target/
+.git/
+.gitignore
+*.md
+k8s/
