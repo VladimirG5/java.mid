@@ -2,9 +2,20 @@ import { createContext, useContext, useState, ReactNode } from 'react'
 
 interface AuthContextType {
   token: string | null
+  username: string | null
   saveToken: (token: string) => void
   logout: () => void
   isAuthenticated: boolean
+}
+
+function parseUsername(token: string | null): string | null {
+  if (!token) return null;
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.sub ?? null;
+  } catch {
+    return null;
+  }
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -23,7 +34,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ token, saveToken, logout, isAuthenticated: !!token }}>
+    <AuthContext.Provider value={{ token, username: parseUsername(token), saveToken, logout, isAuthenticated: !!token }}>
       {children}
     </AuthContext.Provider>
   )

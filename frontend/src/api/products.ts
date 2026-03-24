@@ -10,13 +10,14 @@ export interface Product {
 
 export interface ProductPage {
   content: Product[]
+  page: number
+  size: number
+  total: number
   totalPages: number
-  totalElements: number
-  number: number
 }
 
-export const getProducts = (page = 0, size = 12) =>
-  client.get<ProductPage>('/products', { params: { page, size } });
+export const getProducts = (page = 0, size = 10, sortBy = 'id', order = 'asc') =>
+  client.get<ProductPage>('/products', { params: { page, size, sortBy, order } });
 
 export const getProduct = (id: string | number) =>
   client.get<Product>(`/products/${id}`);
