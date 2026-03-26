@@ -27,7 +27,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class CardServiceImplTest {
+class CartServiceImplTest {
 
     @Mock
     CartItemRepository cartItemRepository;
@@ -39,7 +39,7 @@ class CardServiceImplTest {
     DummyJsonClientService dummyJsonClient;
 
     @InjectMocks
-    CardServiceImpl cartService;
+    CartServiceImpl cartService;
 
     private User user;
 
@@ -145,6 +145,20 @@ class CardServiceImplTest {
         assertThatThrownBy(() -> cartService.decreaseCartItemQuantity("john", 10L))
                 .isInstanceOf(CartItemNotFoundException.class)
                 .hasMessageContaining("10");
+    }
+
+    @Test
+    void decreaseCartItemQuantity_whenQuantityIsOne_thenRemoveItemFromCart() {
+        CartItem item = CartItem.builder().id(1L).userId(1L).productId(10L).quantity(1).build();
+
+        when(userService.getUser("john")).thenReturn(user);
+        when(cartItemRepository.findByUserIdAndProductId(1L, 10L)).thenReturn(Optional.of(item));
+        when(cartItemRepository.findByUserId(1L)).thenReturn(List.of());
+
+        cartService.decreaseCartItemQuantity("john", 10L);
+
+        verify(cartItemRepository).deleteByUserIdAndProductId(1L, 10L);
+        verify(cartItemRepository, org.mockito.Mockito.never()).save(org.mockito.ArgumentMatchers.any());
     }
 
     @Test

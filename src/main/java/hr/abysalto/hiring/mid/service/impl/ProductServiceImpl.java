@@ -11,6 +11,7 @@ import hr.abysalto.hiring.mid.service.ProductService;
 import hr.abysalto.hiring.mid.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -42,6 +43,7 @@ public class ProductServiceImpl implements ProductService {
 
 
     @Override
+    @Transactional
     public void addToFavorites(String username, Long productId) {
         User user = userService.getUser(username);
         if (!favoriteProductRepository.existsByUserIdAndProductId(user.getId(), productId)) {

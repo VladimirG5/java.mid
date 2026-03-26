@@ -13,12 +13,13 @@ import hr.abysalto.hiring.mid.service.DummyJsonClientService;
 import hr.abysalto.hiring.mid.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class CardServiceImpl implements CartService {
+public class CartServiceImpl implements CartService {
 
     private final UserService userService;
     private final CartItemRepository cartItemRepository;
@@ -43,6 +44,7 @@ public class CardServiceImpl implements CartService {
     }
 
     @Override
+    @Transactional
     public CartResponse addToCart(String username, AddToCartRequest request) {
         User user = userService.getUser(username);
         cartItemRepository.findByUserIdAndProductId(user.getId(), request.getProductId())
@@ -68,8 +70,12 @@ public class CardServiceImpl implements CartService {
             throw new CartItemQuantityException(productId);
         }
 
-        item.setQuantity(item.getQuantity() - 1);
-        cartItemRepository.save(item);
+        if (item.getQuantity() == 1) {
+            cartItemRepository.deleteByUserIdAndProductId(user.getId(), productId);
+        } else {
+            item.setQuantity(item.getQuantity() - 1);
+            cartItemRepository.save(item);
+        }
 
         return getCart(username);
     }
