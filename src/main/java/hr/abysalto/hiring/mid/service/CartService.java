@@ -26,6 +26,18 @@ public interface CartService {
     CartResponse addToCart(String username, AddToCartRequest request);
 
     /**
+     * Decreases the quantity of a product in the user's cart by one.
+     *
+     * @param username  the authenticated user's username
+     * @param productId the ID of the product to decrease
+     * @return the updated {@link CartResponse}
+     * @throws hr.abysalto.hiring.mid.exception.UserNotFoundException      if the user is not found
+     * @throws hr.abysalto.hiring.mid.exception.CartItemNotFoundException  if the product is not in the cart
+     * @throws hr.abysalto.hiring.mid.exception.CartItemQuantityException  if the product quantity is already zero
+     */
+    CartResponse decreaseCartItemQuantity(String username, Long productId);
+
+    /**
      * Removes a product from the user's cart.
      *
      * @param username  the authenticated user's username

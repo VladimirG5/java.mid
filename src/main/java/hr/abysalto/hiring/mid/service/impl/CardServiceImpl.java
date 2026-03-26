@@ -3,6 +3,8 @@ package hr.abysalto.hiring.mid.service.impl;
 import hr.abysalto.hiring.mid.dto.request.AddToCartRequest;
 import hr.abysalto.hiring.mid.dto.response.CartItemResponse;
 import hr.abysalto.hiring.mid.dto.response.CartResponse;
+import hr.abysalto.hiring.mid.exception.CartItemNotFoundException;
+import hr.abysalto.hiring.mid.exception.CartItemQuantityException;
 import hr.abysalto.hiring.mid.model.CartItem;
 import hr.abysalto.hiring.mid.model.User;
 import hr.abysalto.hiring.mid.repository.CartItemRepository;
@@ -52,6 +54,22 @@ public class CardServiceImpl implements CartService {
                         .productId(request.getProductId())
                         .quantity(request.getQuantity())
                         .build()));
+
+        return getCart(username);
+    }
+
+    @Override
+    public CartResponse decreaseCartItemQuantity(String username, Long productId) {
+        User user = userService.getUser(username);
+        CartItem item = cartItemRepository.findByUserIdAndProductId(user.getId(), productId)
+                .orElseThrow(() -> new CartItemNotFoundException(productId));
+
+        if (item.getQuantity() <= 0) {
+            throw new CartItemQuantityException(productId);
+        }
+
+        item.setQuantity(item.getQuantity() - 1);
+        cartItemRepository.save(item);
 
         return getCart(username);
     }

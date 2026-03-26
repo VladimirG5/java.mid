@@ -18,6 +18,8 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
+import hr.abysalto.hiring.mid.exception.CartItemQuantityException;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -104,6 +106,32 @@ class CartControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+
+    @Test
+    @WithMockUser(username = "john")
+    void decreaseCartItemQuantity_whenRequestIsValid_thenReturnUpdatedCart() throws Exception {
+        CartResponse cartResponse = CartResponse.builder()
+                .items(List.of()).totalItems(0).build();
+
+        when(cartService.decreaseCartItemQuantity("john", 10L)).thenReturn(cartResponse);
+
+        mockMvc.perform(patch("/cart/items/10/decrease")
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalItems").value(0));
+    }
+
+    @Test
+    @WithMockUser(username = "john")
+    void decreaseCartItemQuantity_whenQuantityIsZero_thenReturn422() throws Exception {
+        when(cartService.decreaseCartItemQuantity("john", 10L))
+                .thenThrow(new CartItemQuantityException(10L));
+
+        mockMvc.perform(patch("/cart/items/10/decrease")
+                        .with(csrf()))
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.message").value("Cannot decrease quantity below zero for product id: 10"));
+    }
 
     @Test
     @WithMockUser(username = "john")

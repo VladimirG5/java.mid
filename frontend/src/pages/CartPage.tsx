@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react'
-import { getCart, removeFromCart, addToCart, type Cart } from '../api/cart'
+import axios from 'axios'
+import { getCart, removeFromCart, addToCart, decreaseCartItemQuantity, type Cart } from '../api/cart'
+import Toast from '../components/Toast'
 
 export default function CartPage() {
   const [cart, setCart] = useState<Cart | null>(null);
   const [error, setError] = useState('');
+  const [toast, setToast] = useState('');
 
   const load = () =>
     getCart().then(({ data }) => setCart(data)).catch(() => setError('Failed to load cart'));
@@ -19,12 +22,25 @@ export default function CartPage() {
     }
   }
 
-  const handleQuantityChange = async (productId: number, delta: number) => {
+  const handleIncrease = async (productId: number) => {
     try {
-      const { data } = await addToCart(productId, delta);
+      const { data } = await addToCart(productId, 1);
       setCart(data);
     } catch {
       setError('Failed to update quantity');
+    }
+  }
+
+  const handleDecrease = async (productId: number) => {
+    try {
+      const { data } = await decreaseCartItemQuantity(productId);
+      setCart(data);
+    } catch (err) {
+      if (axios.isAxiosError(err) && err.response?.status === 422) {
+        setToast(err.response.data?.message ?? 'Cannot decrease quantity below zero');
+      } else {
+        setError('Failed to update quantity');
+      }
     }
   }
 
@@ -35,6 +51,7 @@ export default function CartPage() {
     <div className="container">
       <h2>Cart ({cart.totalItems} items)</h2>
       {cart.items.length === 0 && <p>Your cart is empty.</p>}
+      {toast && <Toast message={toast} onClose={() => setToast('')} />}
       <div className="cart-list">
         {cart.items.map(item => (
           <div key={item.productId} className="cart-item">
@@ -46,17 +63,9 @@ export default function CartPage() {
               <p>${item.product?.price}</p>
             </div>
             <div className="cart-item-controls">
-              <button onClick={() => handleQuantityChange(item.productId, 1)}>+</button>
+              <button onClick={() => handleIncrease(item.productId)}>+</button>
               <span>{item.quantity}</span>
-              <button
-                onClick={() =>
-                  item.quantity === 1
-                    ? handleRemove(item.productId)
-                    : handleQuantityChange(item.productId, -1)
-                }
-              >
-                -
-              </button>
+              <button onClick={() => handleDecrease(item.productId)}>-</button>
               <button onClick={() => handleRemove(item.productId)} className="remove-btn">
                 Remove
               </button>

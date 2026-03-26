@@ -18,5 +18,8 @@ export const getCart = () =>
 export const addToCart = (productId: number, quantity: number) =>
   client.post<Cart>('/cart/items', { productId, quantity });
 
+export const decreaseCartItemQuantity = (productId: number) =>
+  client.patch<Cart>(`/cart/items/${productId}/decrease`);
+
 export const removeFromCart = (productId: number) =>
   client.delete<Cart>(`/cart/items/${productId}`);

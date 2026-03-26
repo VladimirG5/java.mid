@@ -55,6 +55,22 @@ public class CartController {
     }
 
     @Operation(
+            summary = "Decrease product quantity in the cart by one",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Quantity decreased, updated cart returned",
+                            content = @Content(schema = @Schema(implementation = CartResponse.class))),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized"),
+                    @ApiResponse(responseCode = "404", description = "Product not in cart"),
+                    @ApiResponse(responseCode = "422", description = "Cannot decrease quantity below zero")
+            }
+    )
+    @PatchMapping("/items/{productId}/decrease")
+    public ResponseEntity<CartResponse> decreaseCartItemQuantity(@AuthenticationPrincipal UserDetails userDetails,
+                                                                 @PathVariable Long productId) {
+        return ResponseEntity.ok(cartService.decreaseCartItemQuantity(userDetails.getUsername(), productId));
+    }
+
+    @Operation(
             summary = "Remove a product from the cart",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Product removed, updated cart returned",

@@ -3,6 +3,8 @@ package hr.abysalto.hiring.mid.service.impl;
 import hr.abysalto.hiring.mid.dto.request.AddToCartRequest;
 import hr.abysalto.hiring.mid.dto.response.CartResponse;
 import hr.abysalto.hiring.mid.dto.response.DummyProduct;
+import hr.abysalto.hiring.mid.exception.CartItemNotFoundException;
+import hr.abysalto.hiring.mid.exception.CartItemQuantityException;
 import hr.abysalto.hiring.mid.model.CartItem;
 import hr.abysalto.hiring.mid.model.User;
 import hr.abysalto.hiring.mid.repository.CartItemRepository;
@@ -120,6 +122,41 @@ class CardServiceImplTest {
 
         verify(cartItemRepository).deleteByUserIdAndProductId(1L, 10L);
         assertThat(response.getTotalItems()).isEqualTo(0);
+    }
+
+    @Test
+    void decreaseCartItemQuantity_whenQuantityIsAboveZero_thenDecrementAndReturnCart() {
+        CartItem item = CartItem.builder().id(1L).userId(1L).productId(10L).quantity(3).build();
+
+        when(userService.getUser("john")).thenReturn(user);
+        when(cartItemRepository.findByUserIdAndProductId(1L, 10L)).thenReturn(Optional.of(item));
+        when(cartItemRepository.findByUserId(1L)).thenReturn(List.of());
+
+        cartService.decreaseCartItemQuantity("john", 10L);
+
+        verify(cartItemRepository).save(argThat(saved -> saved.getQuantity().equals(2)));
+    }
+
+    @Test
+    void decreaseCartItemQuantity_whenItemNotInCart_thenThrowCartItemNotFoundException() {
+        when(userService.getUser("john")).thenReturn(user);
+        when(cartItemRepository.findByUserIdAndProductId(1L, 10L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> cartService.decreaseCartItemQuantity("john", 10L))
+                .isInstanceOf(CartItemNotFoundException.class)
+                .hasMessageContaining("10");
+    }
+
+    @Test
+    void decreaseCartItemQuantity_whenQuantityIsZero_thenThrowCartItemQuantityException() {
+        CartItem item = CartItem.builder().id(1L).userId(1L).productId(10L).quantity(0).build();
+
+        when(userService.getUser("john")).thenReturn(user);
+        when(cartItemRepository.findByUserIdAndProductId(1L, 10L)).thenReturn(Optional.of(item));
+
+        assertThatThrownBy(() -> cartService.decreaseCartItemQuantity("john", 10L))
+                .isInstanceOf(CartItemQuantityException.class)
+                .hasMessageContaining("10");
     }
 
     @Test
